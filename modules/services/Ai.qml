@@ -162,7 +162,7 @@ Singleton {
                 properties: {
                     command: {
                         type: "STRING",
-                        description: "The shell command to run (e.g. 'ls -la', 'ip addr', 'hyprctl clients')"
+                        description: "The shell command to run (e.g. 'ls -la', 'ip addr', 'axctl window list')"
                     }
                 },
                 required: ["command"]

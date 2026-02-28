@@ -321,13 +321,13 @@ Item {
                         AxctlService.dispatch(`movewindowpixel exact ${percentageX}% ${percentageY}%, address:${windowData?.address}`);
                         
                         // Force immediate window data update
-                        HyprlandData.updateWindowList();
+                        CompositorData.updateWindowList();
                     } else {
                         // Just move workspace without repositioning
                         AxctlService.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${windowData?.address}`);
                         
                         // Force immediate window data update
-                        HyprlandData.updateWindowList();
+                        CompositorData.updateWindowList();
                     }
                     
                     // Reset position in overview
@@ -347,7 +347,7 @@ Item {
                     AxctlService.dispatch(`movewindowpixel exact ${percentageX}% ${percentageY}%, address:${windowData?.address}`);
                     
                     // Force immediate window data update
-                    HyprlandData.updateWindowList();
+                    CompositorData.updateWindowList();
                     
                     // Set override position for immediate visual update
                     root.overrideX = draggedX;

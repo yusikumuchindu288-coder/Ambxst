@@ -7,7 +7,6 @@ pragma ComponentBehavior: Bound
 import Quickshell
 import Quickshell.Io
 import qs.modules.services
-import Quickshell.Hyprland
 import QtQuick
 
 /**
@@ -301,17 +300,5 @@ Singleton {
                 }
             }
         }
-    }
-
-    GlobalShortcut {
-        name: "brightnessIncrease"
-        description: "Increase brightness"
-        onPressed: root.increaseBrightness()
-    }
-
-    GlobalShortcut {
-        name: "brightnessDecrease"
-        description: "Decrease brightness"
-        onPressed: root.decreaseBrightness()
     }
 }

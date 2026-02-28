@@ -34,7 +34,7 @@ Item {
                 const keyObj = bind.keys[k];
                 const mods = keyObj.modifiers && keyObj.modifiers.length > 0 ? keyObj.modifiers.join(" ") : "";
                 const key = keyObj.key || "";
-                const command = `hyprctl keyword unbind ${mods},${key}`;
+                const command = `axctl config unbind-key ${mods},${key}`;
                 console.log("BindsPanel: Unbinding keybind:", command);
                 unbindProcess.command = ["sh", "-c", command];
                 unbindProcess.running = true;
@@ -43,7 +43,7 @@ Item {
             // Old format fallback
             const mods = bind.modifiers && bind.modifiers.length > 0 ? bind.modifiers.join(" ") : "";
             const key = bind.key || "";
-            const command = `hyprctl keyword unbind ${mods},${key}`;
+            const command = `axctl config unbind-key ${mods},${key}`;
             console.log("BindsPanel: Unbinding keybind:", command);
             unbindProcess.command = ["sh", "-c", command];
             unbindProcess.running = true;
@@ -73,10 +73,10 @@ Item {
     property string editArgument: editActions.length > currentActionPage ? (editActions[currentActionPage].argument || "") : ""
     property string editFlags: editActions.length > currentActionPage ? (editActions[currentActionPage].flags || "") : ""
     property var editCompositor: editActions.length > currentActionPage ? (editActions[currentActionPage].compositor || {
-            "type": "hyprland",
+            "type": "compositor",
             "layouts": []
         }) : {
-        "type": "hyprland",
+        "type": "compositor",
         "layouts": []
     }
 
@@ -136,7 +136,7 @@ Item {
 
         const currentAction = root.editActions[root.currentActionPage];
         let comp = currentAction.compositor || {
-            "type": "hyprland",
+            "type": "compositor",
             "layouts": []
         };
         let layouts = comp.layouts ? comp.layouts.slice() : [];
@@ -149,7 +149,7 @@ Item {
         }
 
         updateCurrentAction(currentAction.dispatcher || "", currentAction.argument || "", currentAction.flags || "", {
-            "type": "hyprland",
+            "type": "compositor",
             "layouts": layouts
         });
     }
@@ -189,7 +189,7 @@ Item {
             "argument": "",
             "flags": "",
             "compositor": {
-                "type": "hyprland",
+                "type": "compositor",
                 "layouts": []
             }
         });
@@ -475,7 +475,7 @@ Item {
                     "argument": "",
                     "flags": "",
                     "compositor": {
-                        "type": "hyprland",
+                        "type": "compositor",
                         "layouts": []
                     }
                 }
@@ -1546,7 +1546,7 @@ Item {
                                             const currentAction = root.editActions[root.currentActionPage];
                                             if (currentAction.dispatcher !== text) {
                                                 root.updateCurrentAction(text, currentAction.argument || "", currentAction.flags || "", currentAction.compositor || {
-                                                    "type": "hyprland",
+                                                    "type": "compositor",
                                                     "layouts": []
                                                 });
                                             }
@@ -1596,7 +1596,7 @@ Item {
                                             const currentAction = root.editActions[root.currentActionPage];
                                             if (currentAction.argument !== text) {
                                                 root.updateCurrentAction(currentAction.dispatcher || "", text, currentAction.flags || "", currentAction.compositor || {
-                                                    "type": "hyprland",
+                                                    "type": "compositor",
                                                     "layouts": []
                                                 });
                                             }
@@ -1644,7 +1644,7 @@ Item {
                                             const currentAction = root.editActions[root.currentActionPage];
                                             if (currentAction.flags !== text) {
                                                 root.updateCurrentAction(currentAction.dispatcher || "", currentAction.argument || "", text, currentAction.compositor || {
-                                                    "type": "hyprland",
+                                                    "type": "compositor",
                                                     "layouts": []
                                                 });
                                             }

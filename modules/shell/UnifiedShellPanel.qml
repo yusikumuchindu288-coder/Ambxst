@@ -73,13 +73,13 @@ PanelWindow {
 
     readonly property bool unifiedEffectActive: false // Flag to notify children to disable internal borders
 
-    readonly property var hyprlandMonitor: AxctlService.monitorFor(targetScreen)
+    readonly property var compositorMonitor: AxctlService.monitorFor(targetScreen)
     readonly property bool hasFullscreenWindow: {
-        if (!hyprlandMonitor)
+        if (!compositorMonitor)
             return false;
 
-        const activeWorkspaceId = hyprlandMonitor.activeWorkspace.id;
-        const monId = hyprlandMonitor.id;
+        const activeWorkspaceId = compositorMonitor.activeWorkspace.id;
+        const monId = compositorMonitor.id;
 
         // Check active toplevel first (fast path)
         const toplevel = ToplevelManager.activeToplevel;
@@ -88,7 +88,7 @@ PanelWindow {
         }
 
         // Check all windows on this monitor (robust path)
-        const wins = HyprlandData.windowList;
+        const wins = CompositorData.windowList;
         for (let i = 0; i < wins.length; i++) {
             if (wins[i].monitor === monId && wins[i].fullscreen && wins[i].workspace.id === activeWorkspaceId) {
                 return true;

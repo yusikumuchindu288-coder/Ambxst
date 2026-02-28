@@ -65,9 +65,9 @@ Item {
 
     // Margin calculations
     readonly property int dockMargin: Config.dock?.margin ?? 8
-    readonly property int hyprlandGapsOut: Config.hyprland?.gapsOut ?? 4
+    readonly property int compositorGapsOut: Config.compositor?.gapsOut ?? 4
 
-    readonly property int windowSideMargin: dockMargin > 0 ? Math.max(0, dockMargin - hyprlandGapsOut) : 0
+    readonly property int windowSideMargin: dockMargin > 0 ? Math.max(0, dockMargin - compositorGapsOut) : 0
     readonly property int edgeSideMargin: isDefault ? 0 : dockMargin
 
     // Reference to the bar panel on this screen

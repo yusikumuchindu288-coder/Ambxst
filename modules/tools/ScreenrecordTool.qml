@@ -33,7 +33,7 @@ PanelWindow {
     property bool recordAudioOutput: false
     property bool recordAudioInput: false
 
-    property var focusedMonitor: null // List of monitor objects from hyprctl
+    property var focusedMonitor: null // List of monitor objects from compositor
 
     function getModes() {
         return [

@@ -11,7 +11,7 @@ import "defaults/bar.js" as BarDefaults
 import "defaults/workspaces.js" as WorkspacesDefaults
 import "defaults/overview.js" as OverviewDefaults
 import "defaults/notch.js" as NotchDefaults
-import "defaults/hyprland.js" as HyprlandDefaults
+import "defaults/compositor.js" as CompositorDefaults
 import "defaults/performance.js" as PerformanceDefaults
 import "defaults/weather.js" as WeatherDefaults
 import "defaults/desktop.js" as DesktopDefaults
@@ -44,7 +44,7 @@ Singleton {
     property bool workspacesReady: false
     property bool overviewReady: false
     property bool notchReady: false
-    property bool hyprlandReady: false
+    property bool compositorReady: false
     property bool performanceReady: false
     property bool weatherReady: false
     property bool desktopReady: false
@@ -55,7 +55,7 @@ Singleton {
     property bool aiReady: false
     property bool keybindsInitialLoadComplete: false
 
-    property bool initialLoadComplete: themeReady && barReady && workspacesReady && overviewReady && notchReady && hyprlandReady && performanceReady && weatherReady && desktopReady && lockscreenReady && prefixReady && systemReady && dockReady && aiReady
+    property bool initialLoadComplete: themeReady && barReady && workspacesReady && overviewReady && notchReady && compositorReady && performanceReady && weatherReady && desktopReady && lockscreenReady && prefixReady && systemReady && dockReady && aiReady
 
     // Compatibility aliases
     property alias loader: themeLoader
@@ -69,6 +69,13 @@ Singleton {
         id: ensureConfigDir
         running: true
         command: ["mkdir", "-p", root.configDir]
+    }
+
+    // Auto-migrate hyprland.json → compositor.json for existing users
+    Process {
+        id: migrateCompositorConfig
+        running: true
+        command: ["bash", "-c", `test -f '${root.configDir}/hyprland.json' && ! test -f '${root.configDir}/compositor.json' && mv '${root.configDir}/hyprland.json' '${root.configDir}/compositor.json' && echo 'Migrated hyprland.json to compositor.json' || true`]
     }
 
     // ============================================
@@ -621,17 +628,17 @@ Singleton {
     }
 
     // ============================================
-    // HYPRLAND MODULE
+    // COMPOSITOR MODULE
     // ============================================
     FileView {
-        id: hyprlandLoader
-        path: root.configDir + "/hyprland.json"
+        id: compositorLoader
+        path: root.configDir + "/compositor.json"
         atomicWrites: true
         watchChanges: true
         onLoaded: {
-            if (!root.hyprlandReady) {
-                validateModule("hyprland", hyprlandLoader, HyprlandDefaults.data, () => {
-                    root.hyprlandReady = true;
+            if (!root.compositorReady) {
+                validateModule("compositor", compositorLoader, CompositorDefaults.data, () => {
+                    root.compositorReady = true;
                 });
             }
         }
@@ -642,8 +649,8 @@ Singleton {
         }
         onPathChanged: reload()
         onAdapterUpdated: {
-            if (root.hyprlandReady && !root.pauseAutoSave) {
-                hyprlandLoader.writeAdapter();
+            if (root.compositorReady && !root.pauseAutoSave) {
+                compositorLoader.writeAdapter();
             }
         }
 
@@ -1240,7 +1247,7 @@ Singleton {
                                 "argument": bind.argument || "",
                                 "flags": bind.flags || "",
                                 "compositor": {
-                                    "type": "hyprland",
+                                    "type": "compositor",
                                     "layouts": []
                                 }
                             }
@@ -1261,7 +1268,7 @@ Singleton {
                                 "argument": action.argument || "",
                                 "flags": action.flags || "",
                                 "compositor": {
-                                    "type": "hyprland",
+                                    "type": "compositor",
                                     "layouts": []
                                 }
                             });
@@ -1471,7 +1478,7 @@ Singleton {
                             "argument": "",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1494,7 +1501,7 @@ Singleton {
                             "argument": "1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1515,7 +1522,7 @@ Singleton {
                             "argument": "2",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1536,7 +1543,7 @@ Singleton {
                             "argument": "3",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1557,7 +1564,7 @@ Singleton {
                             "argument": "4",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1578,7 +1585,7 @@ Singleton {
                             "argument": "5",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1599,7 +1606,7 @@ Singleton {
                             "argument": "6",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1620,7 +1627,7 @@ Singleton {
                             "argument": "7",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1641,7 +1648,7 @@ Singleton {
                             "argument": "8",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1662,7 +1669,7 @@ Singleton {
                             "argument": "9",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1683,7 +1690,7 @@ Singleton {
                             "argument": "10",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1706,7 +1713,7 @@ Singleton {
                             "argument": "1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1727,7 +1734,7 @@ Singleton {
                             "argument": "2",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1748,7 +1755,7 @@ Singleton {
                             "argument": "3",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1769,7 +1776,7 @@ Singleton {
                             "argument": "4",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1790,7 +1797,7 @@ Singleton {
                             "argument": "5",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1811,7 +1818,7 @@ Singleton {
                             "argument": "6",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1832,7 +1839,7 @@ Singleton {
                             "argument": "7",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1853,7 +1860,7 @@ Singleton {
                             "argument": "8",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1874,7 +1881,7 @@ Singleton {
                             "argument": "9",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1895,7 +1902,7 @@ Singleton {
                             "argument": "10",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1918,7 +1925,7 @@ Singleton {
                             "argument": "e-1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1939,7 +1946,7 @@ Singleton {
                             "argument": "e+1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1960,7 +1967,7 @@ Singleton {
                             "argument": "e-1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -1981,7 +1988,7 @@ Singleton {
                             "argument": "e+1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2002,7 +2009,7 @@ Singleton {
                             "argument": "-1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2023,7 +2030,7 @@ Singleton {
                             "argument": "+1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2046,7 +2053,7 @@ Singleton {
                             "argument": "",
                             "flags": "m",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2067,7 +2074,7 @@ Singleton {
                             "argument": "",
                             "flags": "m",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2090,7 +2097,7 @@ Singleton {
                             "argument": "playerctl play-pause",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2111,7 +2118,7 @@ Singleton {
                             "argument": "playerctl previous",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2132,7 +2139,7 @@ Singleton {
                             "argument": "playerctl next",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2153,7 +2160,7 @@ Singleton {
                             "argument": "playerctl play-pause",
                             "flags": "l",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2174,7 +2181,7 @@ Singleton {
                             "argument": "playerctl stop",
                             "flags": "l",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2197,7 +2204,7 @@ Singleton {
                             "argument": "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 10%+",
                             "flags": "le",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2218,7 +2225,7 @@ Singleton {
                             "argument": "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 10%-",
                             "flags": "le",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2239,7 +2246,7 @@ Singleton {
                             "argument": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
                             "flags": "le",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2262,7 +2269,7 @@ Singleton {
                             "argument": "ambxst brightness +5",
                             "flags": "le",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2283,7 +2290,7 @@ Singleton {
                             "argument": "ambxst brightness -5",
                             "flags": "le",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2306,7 +2313,7 @@ Singleton {
                             "argument": "notify-send \"Soon\"",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2329,7 +2336,7 @@ Singleton {
                             "argument": "",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2350,7 +2357,7 @@ Singleton {
                             "argument": "special",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2373,7 +2380,7 @@ Singleton {
                             "argument": "loginctl lock-session",
                             "flags": "l",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2391,10 +2398,10 @@ Singleton {
                     "actions": [
                         {
                             "dispatcher": "exec",
-                            "argument": "hyprctl dispatch dpms off",
+                            "argument": "axctl monitor set-dpms 0 0",
                             "flags": "l",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2412,10 +2419,10 @@ Singleton {
                     "actions": [
                         {
                             "dispatcher": "exec",
-                            "argument": "hyprctl dispatch dpms on",
+                            "argument": "axctl monitor set-dpms 0 1",
                             "flags": "l",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2442,7 +2449,7 @@ Singleton {
                             "argument": "focus u",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         },
@@ -2451,7 +2458,7 @@ Singleton {
                             "argument": "u",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["dwindle", "master"]
                             }
                         }
@@ -2476,7 +2483,7 @@ Singleton {
                             "argument": "focus d",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         },
@@ -2485,7 +2492,7 @@ Singleton {
                             "argument": "d",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["master", "dwindle"]
                             }
                         }
@@ -2514,7 +2521,7 @@ Singleton {
                             "argument": "focus l",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         },
@@ -2523,7 +2530,7 @@ Singleton {
                             "argument": "l",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["dwindle", "master"]
                             }
                         }
@@ -2552,7 +2559,7 @@ Singleton {
                             "argument": "focus r",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         },
@@ -2561,7 +2568,7 @@ Singleton {
                             "argument": "r",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["master", "dwindle"]
                             }
                         }
@@ -2588,7 +2595,7 @@ Singleton {
                             "argument": "l",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["master", "dwindle"]
                             }
                         },
@@ -2597,7 +2604,7 @@ Singleton {
                             "argument": "movewindowto l",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2622,7 +2629,7 @@ Singleton {
                             "argument": "r",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["dwindle", "master"]
                             }
                         },
@@ -2631,7 +2638,7 @@ Singleton {
                             "argument": "movewindowto r",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2656,7 +2663,7 @@ Singleton {
                             "argument": "u",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["master", "dwindle"]
                             }
                         },
@@ -2665,7 +2672,7 @@ Singleton {
                             "argument": "movewindowto u",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2690,7 +2697,7 @@ Singleton {
                             "argument": "d",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["master", "dwindle"]
                             }
                         },
@@ -2699,7 +2706,7 @@ Singleton {
                             "argument": "movewindowto d",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2726,7 +2733,7 @@ Singleton {
                             "argument": "colresize +0.1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         },
@@ -2735,7 +2742,7 @@ Singleton {
                             "argument": "50 0",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["master", "dwindle"]
                             }
                         }
@@ -2760,7 +2767,7 @@ Singleton {
                             "argument": "colresize -0.1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         },
@@ -2769,7 +2776,7 @@ Singleton {
                             "argument": "-50 0",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["master", "dwindle"]
                             }
                         }
@@ -2794,7 +2801,7 @@ Singleton {
                             "argument": "0 50",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2819,7 +2826,7 @@ Singleton {
                             "argument": "0 -50",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": []
                             }
                         }
@@ -2842,7 +2849,7 @@ Singleton {
                             "argument": "promote",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2863,7 +2870,7 @@ Singleton {
                             "argument": "togglefit",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2884,7 +2891,7 @@ Singleton {
                             "argument": "colresize +conf",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2909,7 +2916,7 @@ Singleton {
                             "argument": "swapcol l",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2934,7 +2941,7 @@ Singleton {
                             "argument": "swapcol r",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2957,7 +2964,7 @@ Singleton {
                             "argument": "movecoltoworkspace 1",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2978,7 +2985,7 @@ Singleton {
                             "argument": "movecoltoworkspace 2",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -2999,7 +3006,7 @@ Singleton {
                             "argument": "movecoltoworkspace 3",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3020,7 +3027,7 @@ Singleton {
                             "argument": "movecoltoworkspace 4",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3041,7 +3048,7 @@ Singleton {
                             "argument": "movecoltoworkspace 5",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3062,7 +3069,7 @@ Singleton {
                             "argument": "movecoltoworkspace 6",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3083,7 +3090,7 @@ Singleton {
                             "argument": "movecoltoworkspace 7",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3104,7 +3111,7 @@ Singleton {
                             "argument": "movecoltoworkspace 8",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3125,7 +3132,7 @@ Singleton {
                             "argument": "movecoltoworkspace 9",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3146,7 +3153,7 @@ Singleton {
                             "argument": "movecoltoworkspace 10",
                             "flags": "",
                             "compositor": {
-                                "type": "hyprland",
+                                "type": "compositor",
                                 "layouts": ["scrolling"]
                             }
                         }
@@ -3252,13 +3259,13 @@ Singleton {
         }
     }
 
-    // Hyprland configuration
-    property QtObject hyprland: hyprlandLoader.adapter
-    property int hyprlandRounding: hyprland.syncRoundness ? roundness : hyprland.rounding
-    property int hyprlandBorderSize: hyprland.syncBorderWidth ? (theme.srBg.border[1] || 0) : hyprland.borderSize
-    property string hyprlandBorderColor: hyprland.syncBorderColor ? (theme.srBg.border[0] || "primary") : (hyprland.activeBorderColor.length > 0 ? hyprland.activeBorderColor[0] : "primary")
-    property real hyprlandShadowOpacity: hyprland.syncShadowOpacity ? theme.shadowOpacity : hyprland.shadowOpacity
-    property string hyprlandShadowColor: hyprland.syncShadowColor ? theme.shadowColor : hyprland.shadowColor
+    // Compositor configuration
+    property QtObject compositor: compositorLoader.adapter
+    property int compositorRounding: compositor.syncRoundness ? roundness : compositor.rounding
+    property int compositorBorderSize: compositor.syncBorderWidth ? (theme.srBg.border[1] || 0) : compositor.borderSize
+    property string compositorBorderColor: compositor.syncBorderColor ? (theme.srBg.border[0] || "primary") : (compositor.activeBorderColor.length > 0 ? compositor.activeBorderColor[0] : "primary")
+    property real compositorShadowOpacity: compositor.syncShadowOpacity ? theme.shadowOpacity : compositor.shadowOpacity
+    property string compositorShadowColor: compositor.syncShadowColor ? theme.shadowColor : compositor.shadowColor
 
     // Performance configuration
     property QtObject performance: performanceLoader.adapter
@@ -3301,8 +3308,8 @@ Singleton {
     function saveNotch() {
         notchLoader.writeAdapter();
     }
-    function saveHyprland() {
-        hyprlandLoader.writeAdapter();
+    function saveCompositor() {
+        compositorLoader.writeAdapter();
     }
     function savePerformance() {
         performanceLoader.writeAdapter();

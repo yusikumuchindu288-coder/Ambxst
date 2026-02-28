@@ -3,7 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 import qs.modules.services
 import qs.config
-import qs.modules.bar.workspaces // For HyprlandData
+import qs.modules.bar.workspaces // For CompositorData
 
 PanelWindow {
     id: screenCorners
@@ -33,7 +33,7 @@ PanelWindow {
         }
 
         // Check all windows on this monitor (robust path)
-        const wins = HyprlandData.windowList;
+        const wins = CompositorData.windowList;
         for (let i = 0; i < wins.length; i++) {
             if (wins[i].monitor === monId && wins[i].fullscreen && wins[i].workspace.id === activeWorkspaceId) {
                 activeWindowFullscreen = true;
@@ -49,7 +49,7 @@ PanelWindow {
     }
 
     Connections {
-        target: HyprlandData
+        target: CompositorData
         function onWindowListChanged() { screenCorners.updateFullscreen(); }
     }
 

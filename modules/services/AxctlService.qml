@@ -57,7 +57,7 @@ Singleton {
             cmdArgs = ["workspace", "toggle-special"];
             if (rawArgs) cmdArgs.push(rawArgs);
         } else {
-            cmdArgs = ["system", "execute", "hyprctl dispatch " + command];
+            cmdArgs = ["system", "execute", command];
         }
 
         let finalCommand = ["axctl"].concat(cmdArgs.filter(x => x !== "" && x !== undefined));

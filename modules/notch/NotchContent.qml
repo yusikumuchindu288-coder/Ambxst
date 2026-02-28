@@ -27,8 +27,8 @@ Item {
     readonly property bool isScreenFocused: AxctlService.focusedMonitor && AxctlService.focusedMonitor.name === screen.name
 
     // Monitor reference and refrence to toplevels on monitor
-    readonly property var hyprlandMonitor: AxctlService.monitorFor(screen)
-    readonly property var toplevels: (!hyprlandMonitor || !hyprlandMonitor.activeWorkspace || !AxctlService.clients.values) ? [] : AxctlService.clients.values.filter(c => c.workspace.id === hyprlandMonitor.activeWorkspace.id)
+    readonly property var compositorMonitor: AxctlService.monitorFor(screen)
+    readonly property var toplevels: (!compositorMonitor || !compositorMonitor.activeWorkspace || !AxctlService.clients.values) ? [] : AxctlService.clients.values.filter(c => c.workspace.id === compositorMonitor.activeWorkspace.id)
 
     // Check if there are any windows on the current monitor and workspace
     readonly property bool hasWindows: toplevels.length > 0
@@ -62,7 +62,7 @@ Item {
 
     // Fullscreen detection - check if active toplevel is fullscreen on this screen
     readonly property bool activeWindowFullscreen: {
-        if (!hyprlandMonitor || !toplevels) return false;
+        if (!compositorMonitor || !toplevels) return false;
 
         // Check all toplevels on active workspcace
         for (var i = 0; i < toplevels.length; i++) {

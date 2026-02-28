@@ -49,46 +49,46 @@ Singleton {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // HYPRLAND LAYOUT STATE (dynamic, not persisted)
+    // COMPOSITOR LAYOUT STATE (dynamic, not persisted)
     // ═══════════════════════════════════════════════════════════════
-    property string hyprlandLayout: "dwindle"
-    property bool hyprlandLayoutReady: false
+    property string compositorLayout: "dwindle"
+    property bool compositorLayoutReady: false
     readonly property var availableLayouts: ["dwindle", "master", "scrolling"]
 
-    function setHyprlandLayout(layout) {
+    function setCompositorLayout(layout) {
         if (availableLayouts.includes(layout)) {
-            hyprlandLayout = layout;
+            compositorLayout = layout;
         }
     }
 
-    function cycleHyprlandLayout() {
-        const currentIndex = availableLayouts.indexOf(hyprlandLayout);
+    function cycleCompositorLayout() {
+        const currentIndex = availableLayouts.indexOf(compositorLayout);
         const nextIndex = (currentIndex + 1) % availableLayouts.length;
-        hyprlandLayout = availableLayouts[nextIndex];
+        compositorLayout = availableLayouts[nextIndex];
     }
 
     // Query current layout from AxctlService on startup
     Process {
         id: layoutQueryProcess
-        command: ["hyprctl", "getoption", "general:layout", "-j"]
+        command: ["axctl", "config", "get", "layout"]
         running: true
         stdout: SplitParser {
             onRead: data => {
                 try {
                     const parsed = JSON.parse(data);
                     if (parsed.str && root.availableLayouts.includes(parsed.str)) {
-                        root.hyprlandLayout = parsed.str;
-                        console.log("GlobalStates: Layout inicial desde AxctlService: " + parsed.str);
+                        root.compositorLayout = parsed.str;
+                        console.log("GlobalStates: Layout detected via axctl: " + parsed.str);
                     }
                 } catch (e) {
-                    console.warn("GlobalStates: Error parsing layout from hyprctl: " + e);
+                    console.warn("GlobalStates: Error parsing layout from axctl: " + e);
                 }
-                root.hyprlandLayoutReady = true;
+                root.compositorLayoutReady = true;
             }
         }
         onExited: {
             // Mark as ready even if parsing failed
-            root.hyprlandLayoutReady = true;
+            root.compositorLayoutReady = true;
         }
     }
 
@@ -481,7 +481,7 @@ Singleton {
         var snapshot = {};
         for (var i = 0; i < _compositorProps.length; i++) {
             var prop = _compositorProps[i];
-            var val = Config.hyprland[prop];
+            var val = Config.compositor[prop];
             // Deep copy arrays
             if (Array.isArray(val)) {
                 snapshot[prop] = JSON.parse(JSON.stringify(val));
@@ -501,9 +501,9 @@ Singleton {
                 var val = snapshot[prop];
                 // Deep copy arrays
                 if (Array.isArray(val)) {
-                    Config.hyprland[prop] = JSON.parse(JSON.stringify(val));
+                    Config.compositor[prop] = JSON.parse(JSON.stringify(val));
                 } else {
-                    Config.hyprland[prop] = val;
+                    Config.compositor[prop] = val;
                 }
             }
         }
@@ -520,7 +520,7 @@ Singleton {
 
     function applyCompositorChanges() {
         if (compositorHasChanges) {
-            Config.saveHyprland();
+            Config.saveCompositor();
             compositorHasChanges = false;
             compositorSnapshot = null;
             Config.pauseAutoSave = false;

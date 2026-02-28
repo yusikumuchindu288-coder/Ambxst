@@ -38,12 +38,12 @@ Item {
     property bool pinned: (Config.bar && Config.bar.pinnedOnStartup !== undefined ? Config.bar.pinnedOnStartup : true)
 
     // Monitor reference and reference to toplevels on monitor
-    readonly property var hyprlandMonitor: AxctlService.monitorFor(screen)
-    readonly property var toplevels: (!hyprlandMonitor || !hyprlandMonitor.activeWorkspace || !AxctlService.clients.values) ? [] : AxctlService.clients.values.filter(c => c.workspace.id === hyprlandMonitor.activeWorkspace.id)
+    readonly property var compositorMonitor: AxctlService.monitorFor(screen)
+    readonly property var toplevels: (!compositorMonitor || !compositorMonitor.activeWorkspace || !AxctlService.clients.values) ? [] : AxctlService.clients.values.filter(c => c.workspace.id === compositorMonitor.activeWorkspace.id)
 
     // Fullscreen detection - check if a toplevel is fullscreen on this screen
     readonly property bool activeWindowFullscreen: {
-        if (!hyprlandMonitor || !toplevels) return false;
+        if (!compositorMonitor || !toplevels) return false;
 
         // Check all toplevels on active workspace
         for (var i = 0; i < toplevels.length; i++) {

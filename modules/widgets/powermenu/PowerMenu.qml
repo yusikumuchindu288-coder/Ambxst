@@ -42,7 +42,7 @@ ActionGrid {
         {
             icon: Icons.logout,
             tooltip: "Exit AxctlService",
-            command: "hyprctl dispatch exit"
+            command: "axctl system exit"
         },
         {
             icon: Icons.reboot,

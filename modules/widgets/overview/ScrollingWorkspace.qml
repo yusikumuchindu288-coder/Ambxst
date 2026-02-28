@@ -579,13 +579,13 @@ Item {
                                             AxctlService.dispatch(`movewindowpixel exact ${percentageX}% ${percentageY}%, address:${(windowDelegate.windowData && windowDelegate.windowData.address !== undefined ? windowDelegate.windowData.address : "")}`);
                                             
                                             // Force immediate window data update
-                                            HyprlandData.updateWindowList();
+                                            CompositorData.updateWindowList();
                                         } else {
                                             // Just move workspace without repositioning for tiled windows
                                             AxctlService.dispatch(`movetoworkspacesilent ${targetWs}, address:${(windowDelegate.windowData && windowDelegate.windowData.address !== undefined ? windowDelegate.windowData.address : "")}`);
                                             
                                             // Force immediate window data update
-                                            HyprlandData.updateWindowList();
+                                            CompositorData.updateWindowList();
                                         }
                                         
                                         // Restore original parent and reset position
@@ -641,7 +641,7 @@ Item {
                                         AxctlService.dispatch(`movewindowpixel exact ${percentageX}% ${percentageY}%, address:${(windowDelegate.windowData && windowDelegate.windowData.address !== undefined ? windowDelegate.windowData.address : "")}`);
                                         
                                         // Force immediate window data update
-                                        HyprlandData.updateWindowList();
+                                        CompositorData.updateWindowList();
                                         
                                         // Restore original parent
                                         if (windowDelegate.originalParent) {

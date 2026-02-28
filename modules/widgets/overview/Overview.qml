@@ -31,8 +31,8 @@ Item {
     readonly property int workspaceGroup: Math.floor((monitor?.activeWorkspace?.id - 1 || 0) / workspacesShown)
 
     // Cache these references
-    readonly property var windowList: HyprlandData.windowList
-    readonly property var monitors: HyprlandData.monitors
+    readonly property var windowList: CompositorData.windowList
+    readonly property var monitors: CompositorData.monitors
     readonly property int monitorId: monitor?.id ?? -1
     readonly property var monitorData: monitors.find(m => m.id === monitorId) ?? null
 

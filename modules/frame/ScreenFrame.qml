@@ -27,7 +27,7 @@ Item {
         }
 
         // Check all windows on this monitor (robust path)
-        const wins = HyprlandData.windowList;
+        const wins = CompositorData.windowList;
         for (let i = 0; i < wins.length; i++) {
             if (wins[i].monitor === monId && wins[i].fullscreen && wins[i].workspace.id === activeWorkspaceId) {
                 return true;

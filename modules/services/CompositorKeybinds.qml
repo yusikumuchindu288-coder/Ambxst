@@ -8,7 +8,7 @@ import qs.modules.globals
 QtObject {
     id: root
 
-    property Process hyprctlProcess: Process {}
+    property Process compositorProcess: Process {}
 
     property var previousAmbxstBinds: ({})
     property var previousCustomBinds: []
@@ -30,8 +30,8 @@ QtObject {
         if (!action.compositor)
             return true;
 
-        // If compositor type is not hyprland, skip (future-proofing)
-        if (action.compositor.type && action.compositor.type !== "hyprland")
+        // If compositor type does not match, skip (future-proofing)
+        if (action.compositor.type && action.compositor.type !== "compositor")
             return false;
 
         // If no layouts specified or empty array, action works in all layouts
@@ -39,7 +39,7 @@ QtObject {
             return true;
 
         // Check if current layout is in the allowed list
-        const currentLayout = GlobalStates.hyprlandLayout;
+        const currentLayout = GlobalStates.compositorLayout;
         return action.compositor.layouts.indexOf(currentLayout) !== -1;
     }
 
@@ -108,17 +108,17 @@ QtObject {
     function applyKeybindsInternal() {
         // Ensure adapter is loaded.
         if (!Config.keybindsLoader.loaded) {
-            console.log("HyprlandKeybinds: Esperando que se cargue el adapter...");
+            console.log("CompositorKeybinds: Esperando que se cargue el adapter...");
             return;
         }
 
         // Wait for layout to be ready.
-        if (!GlobalStates.hyprlandLayoutReady) {
-            console.log("HyprlandKeybinds: Esperando que se detecte el layout de AxctlService...");
+        if (!GlobalStates.compositorLayoutReady) {
+            console.log("CompositorKeybinds: Esperando que se detecte el layout de AxctlService...");
             return;
         }
 
-        console.log("HyprlandKeybinds: Aplicando keybindings (layout: " + GlobalStates.hyprlandLayout + ")...");
+        console.log("CompositorKeybinds: Aplicando keybindings (layout: " + GlobalStates.compositorLayout + ")...");
 
         // Build unbind list.
         let unbindCommands = [];
@@ -305,9 +305,9 @@ QtObject {
         // Combine unbind and bind in a single batch.
         const fullBatchCommand = unbindCommands.join("; ") + "; " + batchCommands.join("; ");
 
-        console.log("HyprlandKeybinds: Ejecutando batch command");
-        hyprctlProcess.command = ["sh", "-c", `hyprctl --batch "${fullBatchCommand}"`];
-        hyprctlProcess.running = true;
+        console.log("CompositorKeybinds: Ejecutando batch command");
+        compositorProcess.command = ["axctl", "config", "raw-batch", fullBatchCommand];
+        compositorProcess.running = true;
     }
 
     property Connections configConnections: Connections {
@@ -326,22 +326,22 @@ QtObject {
     // Re-apply keybinds when layout changes
     property Connections globalStatesConnections: Connections {
         target: GlobalStates
-        function onHyprlandLayoutChanged() {
-            console.log("HyprlandKeybinds: Layout changed to " + GlobalStates.hyprlandLayout + ", reapplying keybindings...");
+        function onCompositorLayoutChanged() {
+            console.log("CompositorKeybinds: Layout changed to " + GlobalStates.compositorLayout + ", reapplying keybindings...");
             applyKeybinds();
         }
-        function onHyprlandLayoutReadyChanged() {
-            if (GlobalStates.hyprlandLayoutReady) {
+        function onCompositorLayoutReadyChanged() {
+            if (GlobalStates.compositorLayoutReady) {
                 applyKeybinds();
             }
         }
     }
 
-    property Connections hyprlandConnections: Connections {
+    property Connections compositorConnections: Connections {
         target: AxctlService
         function onRawEvent(event) {
             if (event.name === "configreloaded") {
-                console.log("HyprlandKeybinds: Detectado configreloaded, reaplicando keybindings...");
+                console.log("CompositorKeybinds: Detectado configreloaded, reaplicando keybindings...");
                 applyKeybinds();
             }
         }

@@ -38,7 +38,7 @@ Item {
     readonly property string focusedTitle: {
         const activeWsId = AxctlService.focusedMonitor?.activeWorkspace?.id;
         if (!activeWsId) return "";
-        const windows = HyprlandData.workspaceWindowsMap[activeWsId] || [];
+        const windows = CompositorData.workspaceWindowsMap[activeWsId] || [];
         if (windows.length === 0) return "";
         const best = windows.reduce((best, win) => {
             const bestFocus = best?.focusHistoryID ?? Infinity;

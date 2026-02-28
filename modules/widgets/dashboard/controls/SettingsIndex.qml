@@ -112,7 +112,7 @@ QtObject {
         { label: "Idle Listener", keywords: "timeout brightness screen off suspend", section: 6, subSection: "idle", subLabel: "System > Idle", icon: Icons.moon, isIcon: true },
         
         // --- Compositor ---
-        { label: "Compositor", keywords: "hyprland window manager wm", section: 7, subSection: "", subLabel: "Compositor", icon: Icons.compositor, isIcon: true },
+        { label: "Compositor", keywords: "compositor window manager wm", section: 7, subSection: "", subLabel: "Compositor", icon: Icons.compositor, isIcon: true },
         
         // Compositor > AxctlService > General
         { label: "Border Size", keywords: "width thickness stroke", section: 7, subSection: "general", subLabel: "Compositor > AxctlService", icon: Icons.frameCorners, isIcon: true },

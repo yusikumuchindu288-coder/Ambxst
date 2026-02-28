@@ -26,7 +26,7 @@ QtObject {
     property string finalPath: ""
     
     property var _activeWorkspaceIds: []
-    property var monitors: [] // List of monitor objects from hyprctl
+    property var monitors: [] // List of monitor objects
     
     // Selection state to synchronize UI across monitors
     property int selectionX: 0
@@ -101,7 +101,7 @@ QtObject {
     // Process for fetching monitors
     property Process monitorsProcess: Process {
         id: monitorsProcess
-        command: ["hyprctl", "-j", "monitors"]
+        command: ["axctl", "monitor", "list"]
         stdout: StdioCollector {}
         onExited: exitCode => {
             if (exitCode === 0) {
@@ -138,7 +138,7 @@ QtObject {
     // Process for fetching windows
     property Process clientsProcess: Process {
         id: clientsProcess
-        command: ["hyprctl", "-j", "clients"]
+        command: ["axctl", "window", "list"]
         stdout: StdioCollector {}
         onExited: exitCode => {
             if (exitCode === 0) {

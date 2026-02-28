@@ -168,12 +168,12 @@ ShellRoot {
         LockScreen {}
     }
 
-    HyprlandConfig {
-        id: hyprlandConfig
+    CompositorConfig {
+        id: compositorConfig
     }
 
-    HyprlandKeybinds {
-        id: hyprlandKeybinds
+    CompositorKeybinds {
+        id: compositorKeybinds
     }
 
     // Screenshot tool
