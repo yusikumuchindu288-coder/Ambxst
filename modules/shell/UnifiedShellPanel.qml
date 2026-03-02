@@ -45,7 +45,7 @@ PanelWindow {
 
     // Whether we need to capture full-screen input for click-outside detection.
     // True when notch modules are open OR any FocusGrab is active (e.g., BarPopups).
-    readonly property bool needsFullScreenInput: notchContent.screenNotchOpen || FocusGrabManager.hasActiveGrab || assistantSidebar.wantsFocus
+    readonly property bool needsFullScreenInput: notchContent.screenNotchOpen || FocusGrabManager.hasActiveGrab || (assistantSidebar.active && assistantSidebar.wantsFocus)
 
     readonly property bool barEnabled: {
         if (!Config.barReady) return false;
@@ -162,7 +162,7 @@ PanelWindow {
                 item: dockContent.visible ? dockContent.dockHitbox : null
             },
             Region {
-                item: assistantSidebar.hitbox.visible ? assistantSidebar.hitbox : null
+                item: (assistantSidebar.active || assistantSidebar.hitbox.visible) ? assistantSidebar.hitbox : null
             }
         ]
     }

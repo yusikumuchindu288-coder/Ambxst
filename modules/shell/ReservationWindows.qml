@@ -24,6 +24,11 @@ Item {
     property bool frameEnabled: false
     property int frameThickness: 6
 
+    property bool sidebarEnabled: GlobalStates.assistantVisible && screen.name === GlobalStates.assistantScreenName
+    property bool sidebarPinned: GlobalStates.assistantPinned
+    property int sidebarWidth: GlobalStates.assistantWidth
+    property string sidebarPosition: GlobalStates.assistantPosition
+
     readonly property int actualFrameSize: frameEnabled ? frameThickness : 0
 
     Item {

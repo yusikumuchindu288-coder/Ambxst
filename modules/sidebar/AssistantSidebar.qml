@@ -52,15 +52,23 @@ Item {
 
     Connections {
         target: GlobalStates
-        function onAssistantHasFocusChanged() {
-            if (GlobalStates.assistantHasFocus) {
-                if (root.active && root.wantsFocus) {
-                    GlobalStates.hideAssistant();
-                } else {
-                    root.wantsFocus = true;
-                    focusSearchInput();
-                }
-                GlobalStates.assistantHasFocus = false;
+        function onAssistantFocusRequested(wasAlreadyOpen) {
+            if (targetScreen.name === GlobalStates.assistantScreenName) {
+                Qt.callLater(() => {
+                    if (wasAlreadyOpen) {
+                        // It was already open. If it currently has focus, close it. Otherwise, regain focus.
+                        if (root.active && root.wantsFocus && inputField.activeFocus) {
+                            GlobalStates.hideAssistant();
+                        } else {
+                            root.wantsFocus = true;
+                            focusSearchInput();
+                        }
+                    } else {
+                        // It just opened. Just ensure it has focus.
+                        root.wantsFocus = true;
+                        focusSearchInput();
+                    }
+                });
             }
         }
     }
@@ -71,6 +79,8 @@ Item {
             Qt.callLater(() => {
                 focusSearchInput();
             });
+        } else {
+            root.wantsFocus = false;
         }
     }
 
@@ -1090,6 +1100,8 @@ Item {
 
                                         TextArea {
                                             id: inputField
+                                            focus: true
+                                            activeFocusOnTab: true
                                             placeholderText: mainChatArea.isWelcome ? "Ask AI or type /help..." : "Message AI..."
                                             placeholderTextColor: Colors.outline
                                             font.pixelSize: 14

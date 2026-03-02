@@ -41,13 +41,20 @@ Item {
     readonly property alias innerRadius: frameContent.innerRadius
     readonly property bool containBar: Config.bar?.containBar ?? false
 
+    readonly property bool sidebarActive: GlobalStates.assistantVisible && targetScreen.name === GlobalStates.assistantScreenName
+    readonly property bool sidebarPinned: GlobalStates.assistantPinned
+    readonly property int sidebarWidth: GlobalStates.assistantWidth
+    readonly property string sidebarPosition: GlobalStates.assistantPosition
+
+    readonly property int sidebarExpansion: sidebarPinned ? sidebarWidth : 0
+
     readonly property string barPos: Config.bar?.position ?? "top"
     // Bar height is 44. Total size = Thickness (Outer) + Bar (44) + Thickness (Inner)
     readonly property int barExpansion: 44 + thickness
     readonly property int topThickness: hasFullscreenWindow ? 0 : (thickness + ((containBar && barPos === "top") ? barExpansion : 0))
     readonly property int bottomThickness: hasFullscreenWindow ? 0 : (thickness + ((containBar && barPos === "bottom") ? barExpansion : 0))
-    readonly property int leftThickness: hasFullscreenWindow ? 0 : (thickness + ((containBar && barPos === "left") ? barExpansion : 0))
-    readonly property int rightThickness: hasFullscreenWindow ? 0 : (thickness + ((containBar && barPos === "right") ? barExpansion : 0))
+    readonly property int leftThickness: hasFullscreenWindow ? 0 : (thickness + ((containBar && barPos === "left") ? barExpansion : 0) + ((sidebarPosition === "left") ? sidebarExpansion : 0))
+    readonly property int rightThickness: hasFullscreenWindow ? 0 : (thickness + ((containBar && barPos === "right") ? barExpansion : 0) + ((sidebarPosition === "right") ? sidebarExpansion : 0))
 
     Item {
         id: noInputRegion
@@ -119,8 +126,9 @@ Item {
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
         WlrLayershell.namespace: "ambxst:screenFrame:left"
 
-        exclusionMode: (root.containBar && root.barPos === "left" && !root.hasFullscreenWindow) ? ExclusionMode.Normal : ExclusionMode.Ignore
-        exclusiveZone: (root.containBar && root.barPos === "left" && !root.hasFullscreenWindow) ? root.leftThickness : 0
+        // The reservation handles the full width (thickness + bar + sidebar)
+        exclusionMode: (!root.hasFullscreenWindow && ((root.containBar && root.barPos === "left") || (root.sidebarPosition === "left" && root.sidebarPinned))) ? ExclusionMode.Normal : ExclusionMode.Ignore
+        exclusiveZone: (!root.hasFullscreenWindow && ((root.containBar && root.barPos === "left") || (root.sidebarPosition === "left" && root.sidebarPinned))) ? root.leftThickness : 0
 
         mask: Region {
             item: noInputRegion
@@ -143,8 +151,8 @@ Item {
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
         WlrLayershell.namespace: "ambxst:screenFrame:right"
 
-        exclusionMode: (root.containBar && root.barPos === "right" && !root.hasFullscreenWindow) ? ExclusionMode.Normal : ExclusionMode.Ignore
-        exclusiveZone: (root.containBar && root.barPos === "right" && !root.hasFullscreenWindow) ? root.rightThickness : 0
+        exclusionMode: (!root.hasFullscreenWindow && ((root.containBar && root.barPos === "right") || (root.sidebarPosition === "right" && root.sidebarPinned))) ? ExclusionMode.Normal : ExclusionMode.Ignore
+        exclusiveZone: (!root.hasFullscreenWindow && ((root.containBar && root.barPos === "right") || (root.sidebarPosition === "right" && root.sidebarPinned))) ? root.rightThickness : 0
 
         mask: Region {
             item: noInputRegion
