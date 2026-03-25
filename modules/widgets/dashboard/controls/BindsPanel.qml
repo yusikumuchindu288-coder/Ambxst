@@ -148,6 +148,14 @@ Item {
         return -1;
     }
 
+    function getActionLabel(actionId) {
+        for (let i = 0; i < actionOptions.length; i++) {
+            if (actionOptions[i].id === actionId)
+                return actionOptions[i].label;
+        }
+        return "";
+    }
+
     // Helper to check if a layout is selected for current action
     function hasLayout(layout) {
         const layouts = root.editLayouts;
@@ -1539,39 +1547,91 @@ Item {
                             }
 
                             StyledRect {
+                                id: actionDropdown
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 44
-                                variant: actionSelector.activeFocus ? "focus" : "common"
+                                variant: actionDropdownArea.containsMouse ? "focus" : "common"
                                 radius: Styling.radius(-2)
 
-                                ComboBox {
-                                    id: actionSelector
+                                RowLayout {
                                     anchors.fill: parent
-                                    anchors.margins: 8
-                                    model: root.actionOptions
-                                    textRole: "label"
-                                    currentIndex: Math.max(0, root.getActionIndex(root.editActionId))
-                                    onActivated: index => {
-                                        if (root.actionOptions[index]) {
-                                            root.setCurrentAction(root.actionOptions[index].id);
-                                        }
+                                    anchors.margins: 12
+                                    spacing: 8
+
+                                    Text {
+                                        text: root.getActionLabel(root.editActionId)
+                                        font.family: Config.theme.font
+                                        font.pixelSize: Styling.fontSize(0)
+                                        color: Colors.overBackground
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
+                                        verticalAlignment: Text.AlignVCenter
                                     }
-                                    delegate: ItemDelegate {
-                                        width: actionSelector.width
-                                        contentItem: RowLayout {
-                                            spacing: 8
-                                            Text {
-                                                text: modelData.label
-                                                font.family: Config.theme.font
-                                                font.pixelSize: Styling.fontSize(0)
-                                                color: Colors.overBackground
-                                                Layout.fillWidth: true
-                                            }
-                                            Text {
-                                                text: modelData.category
-                                                font.family: Config.theme.font
-                                                font.pixelSize: Styling.fontSize(-2)
-                                                color: Colors.overSurfaceVariant
+
+                                    Text {
+                                        text: Icons.caretDown
+                                        font.family: Icons.font
+                                        font.pixelSize: 14
+                                        color: Colors.overSurfaceVariant
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: actionDropdownArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        const pos = actionDropdown.mapToItem(root, 0, actionDropdown.height);
+                                        actionPopup.x = Math.max(0, Math.min(pos.x, root.width - actionPopup.implicitWidth - 16));
+                                        actionPopup.y = Math.max(0, Math.min(pos.y, root.height - actionPopup.implicitHeight - 16));
+                                        actionPopup.open();
+                                    }
+                                }
+                            }
+
+                            Popup {
+                                id: actionPopup
+                                parent: root
+                                modal: false
+                                focus: true
+                                closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+                                implicitWidth: actionDropdown.width
+                                padding: 8
+                                implicitHeight: Math.min(actionList.implicitHeight + padding * 2, 280)
+
+                                background: StyledRect {
+                                    variant: "popup"
+                                    radius: Styling.radius(-2)
+                                }
+
+                                ScrollView {
+                                    anchors.fill: parent
+                                    contentWidth: availableWidth
+                                    clip: true
+
+                                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+                                    ColumnLayout {
+                                        id: actionList
+                                        width: parent.width
+                                        spacing: 4
+
+                                        Repeater {
+                                            model: root.actionOptions
+
+                                            delegate: ActionMenuItem {
+                                                required property string id
+                                                required property string label
+                                                required property string category
+
+                                                actionLabel: label
+                                                actionCategory: category
+                                                onSelected: {
+                                                    root.setCurrentAction(id);
+                                                    actionPopup.close();
+                                                }
                                             }
                                         }
                                     }
@@ -1735,6 +1795,53 @@ Item {
                     }
                 }
             }
+        }
+    }
+
+    component ActionMenuItem: StyledRect {
+        id: actionItem
+        required property string actionLabel
+        required property string actionCategory
+        signal selected
+
+        property bool isHovered: false
+
+        Layout.fillWidth: true
+        Layout.preferredHeight: 36
+        radius: Styling.radius(-4)
+        variant: isHovered ? "focus" : "common"
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 8
+
+            Text {
+                text: actionItem.actionLabel
+                font.family: Config.theme.font
+                font.pixelSize: Styling.fontSize(0)
+                color: Colors.overBackground
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            Text {
+                text: actionItem.actionCategory
+                font.family: Config.theme.font
+                font.pixelSize: Styling.fontSize(-2)
+                color: Colors.overSurfaceVariant
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onEntered: actionItem.isHovered = true
+            onExited: actionItem.isHovered = false
+            onClicked: actionItem.selected()
         }
     }
 
