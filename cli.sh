@@ -171,6 +171,10 @@ find_ambxst_pid_cached() {
 }
 
 restart_ambxst() {
+	# Kill axctl processes first (they survive parent death when forked/detached)
+	pkill -f "axctl.*daemon" 2>/dev/null || true
+	pkill -f "axctl subscribe" 2>/dev/null || true
+
 	PID=$(find_ambxst_pid_cached)
 	if [ -n "$PID" ]; then
 		echo "Stopping Ambxst (PID $PID)..."
@@ -237,6 +241,10 @@ reload)
 	restart_ambxst
 	;;
 quit)
+	# Kill axctl processes first
+	pkill -f "axctl.*daemon" 2>/dev/null || true
+	pkill -f "axctl subscribe" 2>/dev/null || true
+
 	PID=$(find_ambxst_pid_cached)
 	if [ -n "$PID" ]; then
 		echo "Stopping Ambxst (PID $PID)..."
