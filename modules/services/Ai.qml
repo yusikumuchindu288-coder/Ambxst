@@ -183,10 +183,10 @@ Singleton {
             name: "run_shell_command",
             description: "Execute a shell command on the user's system (Linux). Use this to list files, control the system, or run utilities. Output will be returned.",
             parameters: {
-                type: "OBJECT",
+                type: "object",
                 properties: {
                     command: {
-                        type: "STRING",
+                        type: "string",
                         description: "The shell command to run (e.g. 'ls -la', 'ip addr')"
                     }
                 },
@@ -875,7 +875,7 @@ for f in files:
                                 name: id,
                                 icon: Qt.resolvedUrl("../../../assets/aiproviders/mistral.svg"),
                                 description: "Mistral Model",
-                                endpoint: "https://api.mistral.ai/v1/chat/completions",
+                                endpoint: "https://api.mistral.ai/v1",
                                 model: id,
                                 provider: "mistral",
                                 requires_key: true,
@@ -911,7 +911,7 @@ for f in files:
                                 name: id,
                                 icon: Qt.resolvedUrl("../../../assets/aiproviders/groq.svg"),
                                 description: "Groq Model",
-                                endpoint: "https://api.groq.com/openai/v1/chat/completions",
+                                endpoint: "https://api.groq.com/openai/v1",
                                 model: id,
                                 provider: "groq",
                                 requires_key: true,
