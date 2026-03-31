@@ -1,0 +1,15 @@
+pragma Singleton
+
+import QtQuick
+
+Singleton {
+    id: root
+    
+    property bool inhibit: false
+
+    function toggleInhibit() {
+        inhibit = !inhibit;
+    }
+
+    Component.onCompleted: console.log("CaffeineService loaded")
+}
